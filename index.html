@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Partuturan Batak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bg-batak-red { background-color: #8B0000; }
+        .text-batak-red { color: #8B0000; }
+        .border-batak-red { border-color: #8B0000; }
+
+        /* Efek kontras tombol jenis kelamin saat dipilih */
+        input[type="radio"]:checked + .gender-box {
+            background-color: #8B0000 !important;
+            border-color: #8B0000 !important;
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(139, 0, 0, 0.4);
+        }
+        input[type="radio"]:checked + .gender-box span {
+            color: #FFFFFF !important;
+        }
+        
+        /* Modifikasi scrollbar khusus untuk dropdown custom */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #8B0000; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans flex items-center justify-center p-4">
+
+    <div class="max-w-lg w-full bg-white rounded-xl shadow-2xl overflow-visible border-t-8 border-batak-red mb-10">
+        
+        <!-- Header dengan Ornamen Gorga -->
+        <div class="relative bg-gray-900 bg-gradient-to-b from-gray-900 to-black text-white p-6 sm:p-8 text-center overflow-hidden rounded-t-lg">
+            <div class="absolute inset-0 w-full h-full opacity-40" 
+                 style="background-image: url('https://lh3.googleusercontent.com/d/13_zHhXpf7MOhxzyfqkGsWUe5gjXTe6nE'); background-size: cover; background-repeat: no-repeat; background-position: center; mix-blend-mode: lighten;">
+            </div>
+            <div class="relative z-10 py-2">
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-widest uppercase drop-shadow-xl mb-1 text-white">Kalkulator Partuturan</h1>
+                <p class="text-xs sm:text-sm font-semibold tracking-widest text-gray-200">MARGA MANURUNG (UNIVERSAL)</p>
+            </div>
+        </div>
+
+        <!-- Form Input -->
+        <div class="p-4 sm:p-6 space-y-4 sm:space-y-5">
+
+            <!-- Pilihan Jenis Kelamin Pengguna -->
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <label class="block text-sm font-bold text-gray-800 mb-3 text-center">1. Pilih Jenis Kelamin Anda</label>
+                <div class="flex justify-center space-x-3 sm:space-x-4">
+                    <label class="cursor-pointer w-1/2 max-w-[150px]">
+                        <input type="radio" name="jkSaya" value="L" class="peer sr-only">
+                        <div class="gender-box w-full py-2.5 flex items-center justify-center space-x-2 rounded-xl border-2 border-gray-300 bg-white hover:bg-gray-100 transition-all duration-300 shadow-sm">
+                            <span class="text-xl sm:text-2xl text-blue-600 font-bold transition-colors leading-none">♂</span>
+                            <span class="text-xs sm:text-sm font-bold text-gray-600 transition-colors">Laki-laki</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer w-1/2 max-w-[150px]">
+                        <input type="radio" name="jkSaya" value="P" class="peer sr-only">
+                        <div class="gender-box w-full py-2.5 flex items-center justify-center space-x-2 rounded-xl border-2 border-gray-300 bg-white hover:bg-gray-100 transition-all duration-300 shadow-sm">
+                            <span class="text-xl sm:text-2xl text-pink-500 font-bold transition-colors leading-none">♀</span>
+                            <span class="text-xs sm:text-sm font-bold text-gray-600 transition-colors">Perempuan</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Tingkat Silsilah Bersama (Dropdown Custom) -->
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 custom-select-container relative">
+                <label class="block text-sm font-bold text-gray-800 mb-2">2. Leluhur Bersama (Titik Silsilah Bercabang)</label>
+                <p class="text-xs text-gray-500 mb-3">Di tingkat mana leluhur Anda dan leluhur dia adalah saudara kandung?</p>
+                <input type="hidden" id="tingkatSilsilah" value="">
+                <button id="btn-tingkatSilsilah" type="button" onclick="toggleDropdown('dropdown-tingkatSilsilah')" class="w-full border border-gray-300 p-2.5 sm:p-3 text-sm sm:text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-red-800 transition flex justify-between items-center bg-white text-left shadow-sm">
+                    <span id="label-tingkatSilsilah" class="text-gray-500 truncate">Pilih Leluhur Bersama...</span>
+                    <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="dropdown-tingkatSilsilah" class="dropdown-menu custom-scrollbar hidden absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-56 overflow-y-auto">
+                    <!-- JavaScript akan mengisinya -->
+                </div>
+            </div>
+
+            <!-- Cabang Silsilah -->
+            <div class="grid grid-cols-1 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <div class="custom-select-container relative">
+                    <label class="block text-sm font-bold text-gray-800 mb-2">3. Garis Keturunan ANDA</label>
+                    <input type="hidden" id="leluhurSaya" value="">
+                    <button id="btn-leluhurSaya" type="button" onclick="toggleDropdown('dropdown-leluhurSaya')" class="w-full border border-gray-300 p-2.5 sm:p-3 text-sm sm:text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-red-800 transition flex justify-between items-center bg-gray-100 cursor-not-allowed text-left shadow-sm">
+                        <span id="label-leluhurSaya" class="text-gray-500 truncate">Pilih Tingkat Terlebih Dahulu...</span>
+                        <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="dropdown-leluhurSaya" class="dropdown-menu custom-scrollbar hidden absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-56 overflow-y-auto"></div>
+                </div>
+                
+                <div class="custom-select-container relative">
+                    <label class="block text-sm font-bold text-gray-800 mb-2">4. Garis Keturunan LAWAN BICARA</label>
+                    <input type="hidden" id="leluhurDia" value="">
+                    <button id="btn-leluhurDia" type="button" onclick="toggleDropdown('dropdown-leluhurDia')" class="w-full border border-gray-300 p-2.5 sm:p-3 text-sm sm:text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-red-800 transition flex justify-between items-center bg-gray-100 cursor-not-allowed text-left shadow-sm">
+                        <span id="label-leluhurDia" class="text-gray-500 truncate">Pilih Tingkat Terlebih Dahulu...</span>
+                        <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="dropdown-leluhurDia" class="dropdown-menu custom-scrollbar hidden absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-56 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Jenis Kelamin Lawan Bicara -->
+                <div class="custom-select-container relative">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Jenis Kelamin Lawan Bicara</label>
+                    <input type="hidden" id="jkDia" value="">
+                    <button id="btn-jkDia" type="button" onclick="toggleDropdown('dropdown-jkDia')" class="w-full border border-gray-300 p-2.5 sm:p-3 text-sm sm:text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-red-800 transition flex justify-between items-center bg-white text-left shadow-sm">
+                        <span id="label-jkDia" class="text-gray-500 truncate">Pilih...</span>
+                        <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="dropdown-jkDia" class="dropdown-menu custom-scrollbar hidden absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden">
+                        <div onclick="selectOption('jkDia', 'L', 'Laki-laki')" class="px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-[#8B0000] active:bg-red-100 cursor-pointer transition-colors border-b border-gray-100">Laki-laki</div>
+                        <div onclick="selectOption('jkDia', 'P', 'Perempuan')" class="px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-[#8B0000] active:bg-red-100 cursor-pointer transition-colors">Perempuan</div>
+                    </div>
+                </div>
+
+                <!-- Usia Dia -->
+                <div class="custom-select-container relative">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Perbandingan Generasi</label>
+                    <input type="hidden" id="usiaDia" value="">
+                    <button id="btn-usiaDia" type="button" onclick="toggleDropdown('dropdown-usiaDia')" class="w-full border border-gray-300 p-2.5 sm:p-3 text-sm sm:text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-red-800 transition flex justify-between items-center bg-white text-left shadow-sm">
+                        <span id="label-usiaDia" class="text-gray-500 truncate">Pilih...</span>
+                        <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="dropdown-usiaDia" class="dropdown-menu custom-scrollbar hidden absolute z-50 right-0 w-full sm:w-64 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden">
+                        <div onclick="selectOption('usiaDia', 'sebaya', '1 Generasi (Sebaya / Saudara)')" class="px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-[#8B0000] active:bg-red-100 cursor-pointer transition-colors border-b border-gray-100">1 Generasi (Sebaya / Saudara)</div>
+                        <div onclick="selectOption('usiaDia', 'ortu', '1 Generasi di Atas (Generasi Bapak)')" class="px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-[#8B0000] active:bg-red-100 cursor-pointer transition-colors border-b border-gray-100">1 Generasi di Atas (Generasi Bapak)</div>
+                        <div onclick="selectOption('usiaDia', 'ompung', '2 Generasi di Atas (Generasi Ompung)')" class="px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-[#8B0000] active:bg-red-100 cursor-pointer transition-colors">2 Generasi di Atas (Generasi Ompung)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol Hitung -->
+            <button onclick="hitungPanggilan()" class="w-full bg-batak-red hover:bg-red-900 text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-300 mt-2 sm:mt-4">
+                Tentukan Panggilan
+            </button>
+        </div>
+
+        <!-- Hasil / Output -->
+        <div id="hasilContainer" class="hidden bg-gray-50 p-6 border-t border-gray-200">
+            <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Hasil Partuturan:</h2>
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-batak-red">
+                    <p class="text-sm text-gray-500">Anda memanggil dia:</p>
+                    <p id="panggilanSaya" class="text-xl font-bold text-gray-900 mt-1">-</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-gray-800">
+                    <p class="text-sm text-gray-500">Dia memanggil Anda:</p>
+                    <p id="panggilanDia" class="text-xl font-bold text-gray-900 mt-1">-</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pesan Error -->
+        <div id="errorContainer" class="hidden bg-red-100 text-red-700 p-4 text-center text-sm font-semibold">
+            Harap lengkapi semua pilihan terlebih dahulu!
+        </div>
+        <div id="errorSamaContainer" class="hidden bg-yellow-100 text-yellow-800 p-4 text-center text-sm font-semibold">
+            Garis keturunan Anda dan lawan bicara tidak boleh sama. Jika sama, berarti kalian bercabang di tingkat leluhur yang lebih bawah lagi.
+        </div>
+
+    </div>
+
+    <script>
+        const taromboData = {
+            1: { title: "Tingkat 1: Keturunan Toga Manurung", anak: [ {id: 1, nama: "Hutagurgur (Anak ke-1)"}, {id: 2, nama: "Hutagaol (Anak ke-2)"}, {id: 3, nama: "Simanoroni (Anak ke-3)"} ] },
+            2: { title: "Tingkat 2: Keturunan Hutagurgur", anak: [ {id: 1, nama: "Raja Banualuhung (Anak ke-1)"}, {id: 2, nama: "Torpaniaji (Anak ke-2)"}, {id: 3, nama: "Batunanggar (Anak ke-3)"}, {id: 4, nama: "Parpinggol (Anak ke-4)"}, {id: 5, nama: "Silobi Lobi (Anak ke-5)"} ] },
+            3: { title: "Tingkat 3: Keturunan R. Banualuhung", anak: [ {id: 1, nama: "Op. Patujong (Anak ke-1)"}, {id: 2, nama: "Raja Mangatur (Anak ke-2)"} ] },
+            4: { title: "Tingkat 4: Keturunan R. Mangatur", anak: [ {id: 1, nama: "Raja Nauwalu (Anak ke-1)"}, {id: 2, nama: "Patuban-ban (Anak ke-2)"}, {id: 3, nama: "Op. Unggul (Anak ke-3)"}, {id: 4, nama: "Raja Sijambang (Anak ke-4)"}, {id: 5, nama: "Sompaoloan (Anak ke-5)"}, {id: 6, nama: "Tuan Sogar (Anak ke-6)"}, {id: 7, nama: "Raja Hummuntor (Anak ke-7)"} ] },
+            5: { title: "Tingkat 5: Keturunan Op. Unggul", anak: [ {id: 1, nama: "Guru Mandupas (Anak ke-1)"}, {id: 2, nama: "Op. Tarubar (Anak ke-2)"} ] },
+            6: { title: "Tingkat 6: Keturunan Op. Tarubar", anak: [ {id: 1, nama: "Op. Pananggara (Anak ke-1)"}, {id: 2, nama: "Tondi Ulu (Anak ke-2)"}, {id: 3, nama: "Palti Raja (Anak ke-3)"}, {id: 4, nama: "Raja Toga Uluan (Anak ke-4)"}, {id: 5, nama: "Op. Parik (Anak ke-5)"}, {id: 6, nama: "Op. Patuporhas (Anak ke-6)"} ] },
+            7: { title: "Tingkat 7: Keturunan Palti Raja", anak: [ {id: 1, nama: "Op. Baralan (Anak ke-1)"}, {id: 2, nama: "Op. Hombar (Anak ke-2)"}, {id: 3, nama: "Op. Jongguran (Anak ke-3)"}, {id: 4, nama: "Op. Risama (Anak ke-4)"}, {id: 5, nama: "Op. Tunggulnijuji (Anak ke-5)"} ] },
+            8: { title: "Tingkat 8: Keturunan Op. Baralan", anak: [ {id: 1, nama: "Op. Ambang (Anak ke-1)"}, {id: 2, nama: "Op. Runggu (Anak ke-2)"}, {id: 3, nama: "Op. Bango (Anak ke-3)"} ] },
+            9: { title: "Tingkat 9: Keturunan Op. Runggu", anak: [ {id: 1, nama: "Ama Runggu (Anak ke-1)"}, {id: 2, nama: "Op. Solin (Anak ke-2)"} ] },
+            10: { title: "Tingkat 10: Keturunan Ama Ernis / Op. Barlan", anak: [ {id: 1, nama: "Ernis / Op. Johan (Anak ke-1)"}, {id: 2, nama: "Hatial / Op. Agus (Anak ke-2)"}, {id: 3, nama: "Magsi / Op. Lamria (Anak ke-3)"}, {id: 4, nama: "Ontam / Op. Marulak (Anak ke-4)"}, {id: 5, nama: "Juden / Op. Budi (Anak ke-5)"}, {id: 6, nama: "Sarman / Op. Sikardo (Anak ke-6)"}, {id: 7, nama: "Satia / Op. Mei (Anak ke-7)"} ] },
+            11: { title: "Tingkat 11: Keturunan Hatial / Op. Agus", anak: [ {id: 1, nama: "Aron Manurung / Op. Rian (Anak ke-1)"} ] },
+            12: { title: "Tingkat 12: Keturunan Aron Manurung / Op. Rian", anak: [ {id: 1, nama: "Ama Rian (Anak ke-1)"}, {id: 2, nama: "Ama Palti (Anak ke-2)"}, {id: 3, nama: "Firdaus (Anak ke-3)"}, {id: 4, nama: "Desman (Anak ke-4)"}, {id: 5, nama: "Junior (Anak ke-5)"} ] }
+        };
+
+        // Fungsi klik di luar menu akan menutup dropdown
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.custom-select-container')) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.add('hidden'));
+            }
+        });
+
+        // Toggle buka/tutup menu custom
+        function toggleDropdown(id) {
+            const btnId = 'btn-' + id.split('-')[1];
+            const btn = document.getElementById(btnId);
+            if (btn && btn.classList.contains('cursor-not-allowed')) return; // Abaikan jika masih disable
+
+            const menu = document.getElementById(id);
+            const isHidden = menu.classList.contains('hidden');
+            
+            // Tutup semua menu lainnya
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
+            
+            if (isHidden) menu.classList.remove('hidden');
+        }
+
+        // Aksi ketika opsi dipilih
+        function selectOption(inputId, value, text) {
+            document.getElementById(inputId).value = value;
+            
+            const label = document.getElementById('label-' + inputId);
+            label.textContent = text;
+            label.classList.remove('text-gray-500');
+            label.classList.add('text-gray-900', 'font-semibold');
+            
+            document.getElementById('dropdown-' + inputId).classList.add('hidden');
+            
+            if (inputId === 'tingkatSilsilah') {
+                updateCabang();
+            }
+        }
+
+        // Inisialisasi daftar tingkat leluhur
+        window.onload = function() {
+            const dropdown = document.getElementById('dropdown-tingkatSilsilah');
+            const cssClass = "px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-[#8B0000] active:bg-red-100 cursor-pointer transition-colors border-b border-gray-100 last:border-0";
+            
+            for (let tingkat in taromboData) {
+                let div = document.createElement('div');
+                div.className = cssClass;
+                div.textContent = taromboData[tingkat].title;
+                div.onclick = function() { selectOption('tingkatSilsilah', tingkat, taromboData[tingkat].title); };
+                dropdown.appendChild(div);
+            }
+        };
+
+        // Update list keturunan berdasarkan tingkat yang dipilih
+        function updateCabang() {
+            const selectedTingkat = document.getElementById('tingkatSilsilah').value;
+            const dropSaya = document.getElementById('dropdown-leluhurSaya');
+            const dropDia = document.getElementById('dropdown-leluhurDia');
+            const btnSaya = document.getElementById('btn-leluhurSaya');
+            const btnDia = document.getElementById('btn-leluhurDia');
+
+            // Reset
+            dropSaya.innerHTML = '';
+            dropDia.innerHTML = '';
+            document.getElementById('leluhurSaya').value = '';
+            document.getElementById('leluhurDia').value = '';
+            
+            const lblSaya = document.getElementById('label-leluhurSaya');
+            const lblDia = document.getElementById('label-leluhurDia');
+            lblSaya.textContent = 'Pilih Garis Anda...';
+            lblDia.textContent = 'Pilih Garis Lawan Bicara...';
+            lblSaya.className = 'text-gray-500 truncate';
+            lblDia.className = 'text-gray-500 truncate';
+
+            if (selectedTingkat && taromboData[selectedTingkat]) {
+                btnSaya.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                btnDia.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                btnSaya.classList.add('bg-white');
+                btnDia.classList.add('bg-white');
+                
+                const cssClass = "px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-[#8B0000] active:bg-red-100 cursor-pointer transition-colors border-b border-gray-100 last:border-0";
+
+                taromboData[selectedTingkat].anak.forEach(anak => {
+                    let divSaya = document.createElement('div');
+                    divSaya.className = cssClass;
+                    divSaya.textContent = anak.nama;
+                    divSaya.onclick = function() { selectOption('leluhurSaya', anak.id, anak.nama); };
+                    dropSaya.appendChild(divSaya);
+
+                    let divDia = document.createElement('div');
+                    divDia.className = cssClass;
+                    divDia.textContent = anak.nama;
+                    divDia.onclick = function() { selectOption('leluhurDia', anak.id, anak.nama); };
+                    dropDia.appendChild(divDia);
+                });
+            }
+        }
+
+        // Menghitung Partuturan
+        function hitungPanggilan() {
+            const idSaya = document.getElementById('leluhurSaya').value;
+            const idDia = document.getElementById('leluhurDia').value;
+            const jkSayaInput = document.querySelector('input[name="jkSaya"]:checked');
+            const jkSaya = jkSayaInput ? jkSayaInput.value : null;
+            const jkDia = document.getElementById('jkDia').value;
+            const usiaDia = document.getElementById('usiaDia').value;
+
+            const hasilContainer = document.getElementById('hasilContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            const errorSamaContainer = document.getElementById('errorSamaContainer');
+            
+            errorContainer.classList.add('hidden');
+            errorSamaContainer.classList.add('hidden');
+            hasilContainer.classList.add('hidden');
+
+            if (!jkSaya || !idSaya || !idDia || !jkDia || !usiaDia) {
+                errorContainer.classList.remove('hidden');
+                return;
+            }
+
+            if (idSaya === idDia) {
+                errorSamaContainer.classList.remove('hidden');
+                return;
+            }
+
+            const silsilahDia = (parseInt(idDia) > parseInt(idSaya)) ? 'adik' : 'abang';
+            let panggilanSaya = "";
+            let panggilanDia = "";
+
+            if (jkSaya === 'L') {
+                if (jkDia === 'L') {
+                    if (usiaDia === 'sebaya') {
+                        if (silsilahDia === 'adik') { panggilanSaya = "Adik (Anggi)"; panggilanDia = "Abang"; } 
+                        else { panggilanSaya = "Abang"; panggilanDia = "Adik (Anggi)"; }
+                    } else if (usiaDia === 'ortu') {
+                        if (silsilahDia === 'adik') { panggilanSaya = "Bapa Uda (Amanguda)"; panggilanDia = "Anak / Amang"; } 
+                        else { panggilanSaya = "Bapa Tua (Amangtua)"; panggilanDia = "Anak / Amang"; }
+                    } else if (usiaDia === 'ompung') { panggilanSaya = "Ompung (Doli)"; panggilanDia = "Pahompu / Amang"; }
+                } else if (jkDia === 'P') {
+                    if (usiaDia === 'sebaya') { panggilanSaya = "Ito"; panggilanDia = "Ito"; } 
+                    else if (usiaDia === 'ortu') { panggilanSaya = "Namboru / Bou"; panggilanDia = "Ito / Amang"; } 
+                    else if (usiaDia === 'ompung') { panggilanSaya = "Ito (Mangulahi)"; panggilanDia = "Ito"; }
+                }
+            } else if (jkSaya === 'P') {
+                if (jkDia === 'P') {
+                    if (usiaDia === 'sebaya') {
+                        if (silsilahDia === 'adik') { panggilanSaya = "Adik (Anggi)"; panggilanDia = "Kakak (Angkang)"; } 
+                        else { panggilanSaya = "Kakak (Angkang)"; panggilanDia = "Adik (Anggi)"; }
+                    } else if (usiaDia === 'ortu') { panggilanSaya = "Namboru / Bou"; panggilanDia = "Boru"; } 
+                    else if (usiaDia === 'ompung') { panggilanSaya = "Ompung (Boru)"; panggilanDia = "Pahompu / Boru"; }
+                } else if (jkDia === 'L') {
+                    if (usiaDia === 'sebaya') { panggilanSaya = "Ito"; panggilanDia = "Ito"; } 
+                    else if (usiaDia === 'ortu') {
+                        if (silsilahDia === 'adik') { panggilanSaya = "Bapa Uda (Amanguda)"; panggilanDia = "Boru"; } 
+                        else { panggilanSaya = "Bapa Tua (Amangtua)"; panggilanDia = "Boru"; }
+                    } else if (usiaDia === 'ompung') { panggilanSaya = "Ompung (Doli)"; panggilanDia = "Pahompu / Boru"; }
+                }
+            }
+
+            document.getElementById('panggilanSaya').innerText = panggilanSaya;
+            document.getElementById('panggilanDia').innerText = panggilanDia;
+            hasilContainer.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
